@@ -1,1 +1,7 @@
 /* Estilos globales */
+body {
+    background-color: #426F8F;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}

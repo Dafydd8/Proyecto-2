@@ -6,7 +6,9 @@ f_out.write("Año,Album,Streams,Generos,Valoracion\n")
 
 i = 0
 cont = 0
-for linea in f:
+for j,linea in enumerate(f):
+    if j == 0:
+        continue
     if cont == 5:
         cont = 0
         i += 1
