@@ -1,17 +1,33 @@
 <script>
   import * as d3 from "d3"
   import albums from "/src/data/albums_copy.csv"
+  
   // import atletas from "/src/data/athletes.json"
 
-  console.log("albums", albums)
+  function albums_of(anio){
+    const begin = (anio - 2003)*5;
+    const end = begin + 5;
+    const rta = albums.slice(begin, end);
+    return rta;
+  }
 
-  let diccionarioColores = {
-    0: "#FF0000",
-    1: "#00FF00",
-    2: "#0000FF"
-  };
+  function genres(generos){
+    const rta = generos.split(";");
+    console.log("rta", rta);
+    return rta;
+  }
 
-  console.log(diccionarioColores[0])
+  function generarPosiciones(n) {
+    const padding = 20; // Margen para evitar posiciones demasiado cerca de los bordes
+    const posiciones = [];
+    const cubiculos = [[10,10], [60,10], [10,50], [60,50], [35,30]];
+    for (var i = 0; i < n; i++) {
+      const x = (1+ (Math.random())*0.3) * cubiculos[i][0];
+      const y = (1+ (Math.random())*0.3) * cubiculos[i][1];
+      posiciones.push([x, y]);
+    }
+    return posiciones;
+  }
 
   function posicion_circulos(n) {
     const vertices = [];
@@ -27,44 +43,40 @@
       const theta = ((2 * Math.PI * k) / n) + Math.PI/2;
       const pos = [r * Math.cos(theta), r * Math.sin(theta)];
       vertices.push(pos);
-    }/*
-    if (n === 2) {
-      return [[0, -50], [0, 50]]; // Semirecta vertical
     }
-
-    for (let k = 0; k < n; k++) {
-      const theta = (2 * Math.PI * k) / n;
-      const x = r * Math.cos(theta);
-      const y = r * Math.sin(theta);
-
-      // Transformar a porcentajes
-      const xPerc = x * 100;
-      const yPerc = -y * 100; // Invertir y para cumplir con el requerimiento
-
-      vertices.push([xPerc, yPerc]);
+    
+    return vertices;
   }
-*/
-  return vertices;
-}
 
-const n = 3; // Número de vértices
-console.log(posicion_circulos(n));
+  const posiciones = generarPosiciones(5);
+  const color_genero = {
+    "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
+    "Pop": ["210",	"111",	"235", "0.75"],
+    "Rock": ["210",	"88",	"11", "0.75"],
+    "R&B/Soul": ["1",	"151",	"246", "0.75"],
+    "Latin/Regueton": ["252",	"186",	"4", "0.75"],
+    "Otros": ["95",	"205",	"138", "0.75"],
+  }
+  console.log(albums_of(2023));
 
 </script>
 
 <main>
   <div class="container">
-    <div class="album_container" style="top:50%; left:50%">
+    {#each albums_of(2023) as album, index}
+    <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%">
       <div class="album">
         <div class="bubble">
-          {#each posicion_circulos(3) as [x, y], index}
-            <div class="circle" style="left: {x}%; top: {y}% ; width: 80%; height: 80%; background-color: rgba(210, 88, 11, 0.75);"></div>
+          {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
+            <div class="circle" style="left: {x}%; top: {y}% ; width: 80%; height: 80%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
           {/each}
           <img src="./public/images/burbuja.png" alt="Bubble">
         </div>
-        <p>In Between Dreams <br><span>Jack Johnson</span></p>
+        <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
       </div>
     </div>
+    {/each}
+      
       <!---
       <div class="album" style="top: 40%; left: 50%;">
         <img src="./public/images/burbuja.png" alt="Bubble" style="width: 100px; height: 100px">
@@ -102,8 +114,8 @@ console.log(posicion_circulos(n));
 
 .container {
   position: relative;
-  width: auto;
-  height: auto;
+  width: 100vw;
+  height: 100vh;
 }
 
 .album_container {
