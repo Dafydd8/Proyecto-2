@@ -4,6 +4,16 @@
   
   // import atletas from "/src/data/athletes.json"
 
+  let streams = [];
+  for (let i = 0; i < albums.length; i++) {
+    streams.push(parseInt(albums[i].Streams));
+  }
+
+  let bubble_size = d3
+    .scaleRadial()
+    .domain([0, d3.max(streams)])
+    .range([0, 200])
+
   function albums_of(anio){
     const begin = (anio - 2003)*5;
     const end = begin + 5;
@@ -22,8 +32,8 @@
     const posiciones = [];
     const cubiculos = [[10,10], [60,10], [10,50], [60,50], [35,30]];
     for (var i = 0; i < n; i++) {
-      const x = (1+ (Math.random())*0.3) * cubiculos[i][0];
-      const y = (1+ (Math.random())*0.3) * cubiculos[i][1];
+      const x = (1+ (Math.random())*0.3) * cubiculos[i][0]+0.5;
+      const y = (1+ (Math.random())*0.3) * cubiculos[i][1]+1;
       posiciones.push([x, y]);
     }
     return posiciones;
@@ -63,44 +73,30 @@
 
 <main>
   <div class="container">
-    {#each albums_of(2023) as album, index}
+    {#each albums_of(2007) as album, index}
     <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%">
       <div class="album">
         <div class="bubble">
           {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
-            <div class="circle" style="left: {x}%; top: {y}% ; width: 80%; height: 80%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+            {#if genres(album.Generos).length != 1}
+            <div class="anio_dist">
+              <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+            </div>
+            {/if}
+            {#if genres(album.Generos).length == 1}  
+              <div class="circle" style="transform: translate(-5%, -7.5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+            {/if}
           {/each}
-          <img src="./public/images/burbuja.png" alt="Bubble">
+          <img src="./public/images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
         </div>
         <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
       </div>
     </div>
     {/each}
-      
-      <!---
-      <div class="album" style="top: 40%; left: 50%;">
-        <img src="./public/images/burbuja.png" alt="Bubble" style="width: 100px; height: 100px">
-        <p>Late Registration <br><span>Kanye West</span></p>
-      </div>
-      <div class="album" style="top: 60%; left: 15%;">
-        {#each posicion_circulos(1) as [x, y], index}
-        <div class="circle" style="top: {y}%; left: {x}%; width: 100%; height: 100%; color: {diccionarioColores[0]}"></div>
-        {/each}
-        <img src="./public/images/burbuja.png" alt="Bubble" style="width: 100px; height: 100px">
-        <p>X&Y <br><span>Coldplay</span></p>
-      </div>
-      <div class="album" style="top: 30%; left: 70%;">
-        <img src="./public/images/burbuja.png" alt="Bubble" style="width: 100px; height: 100px">
-        <p>Demon Days <br><span>Gorillaz</span></p>
-      </div>
-      <div class="album" style="top: 80%; left: 40%;">
-        <img src="./public/images/burbuja.png" alt="Bubble" style="width: 100px; height: 100px">
-        <p>The Massacre <br><span>50 Cent</span></p>
-      </div>
-    -->
-      <!-- Burbujas adicionales de relleno -->
-      <div class="bubble filler" style="top: 25%; left: 85%;"></div>
-      <div class="bubble filler" style="top: 70%; left: 5%;"></div>
+
+    <!-- Burbujas adicionales de relleno -->
+    <div class="bubble filler" style="top: 25%; left: 85%;"></div>
+    <div class="bubble filler" style="top: 70%; left: 5%;"></div>
   </div>
 
 </main>
@@ -153,7 +149,7 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(10px);
-  transform: translate(10%, 10%);
+  transform: translate(15%, 15%);
   z-index: 0;
 }
 
