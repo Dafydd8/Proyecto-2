@@ -1,10 +1,14 @@
 <script>
+  import { onMount } from "svelte";
   import * as d3 from "d3"
   import albums from "/src/data/albums_copy.csv"
   
   // import atletas from "/src/data/athletes.json"
 
   let streams = [];
+  let currentYear = 2003; // Año inicial
+  let maxYear = 2023; // Año máximo
+
   for (let i = 0; i < albums.length; i++) {
     streams.push(parseInt(albums[i].Streams));
   }
@@ -23,7 +27,6 @@
 
   function genres(generos){
     const rta = generos.split(";");
-    console.log("rta", rta);
     return rta;
   }
 
@@ -67,21 +70,47 @@
     "Latin/Regueton": ["252",	"186",	"4", "0.75"],
     "Otros": ["95",	"205",	"138", "0.75"],
   }
-  console.log(albums_of(2023));
+
+  var scrolling = false;
+
+  // Función para manejar el scroll y cambiar de año
+  function handleScroll(event) {
+    if (scrolling) return; // Evita que el scroll se dispare muchas veces seguidas
+
+    if (event.deltaY > 0 && currentYear < maxYear) {
+      currentYear++;
+    } else if (event.deltaY < 0 && currentYear > 2003) {
+      currentYear--;
+    }
+    console.log(currentYear);
+    scrolling = true;
+    
+    // Resetea el flag después de un breve delay
+    setTimeout(() => {
+      scrolling = false;
+    }, 300);
+  }
+
+  // Detectar el evento de scroll
+  onMount(() => {
+    window.addEventListener("wheel", handleScroll);
+
+    return () => {
+      window.removeEventListener("wheel", handleScroll);
+    };
+  });
 
 </script>
 
 <main>
   <div class="container">
-    {#each albums_of(2007) as album, index}
-    <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%">
+    {#each albums_of(currentYear) as album, index}
+    <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">
       <div class="album">
-        <div class="bubble">
+        <div class="bubble" >
           {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
             {#if genres(album.Generos).length != 1}
-            <div class="anio_dist">
               <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
-            </div>
             {/if}
             {#if genres(album.Generos).length == 1}  
               <div class="circle" style="transform: translate(-5%, -7.5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
@@ -93,10 +122,7 @@
       </div>
     </div>
     {/each}
-
-    <!-- Burbujas adicionales de relleno -->
-    <div class="bubble filler" style="top: 25%; left: 85%;"></div>
-    <div class="bubble filler" style="top: 70%; left: 5%;"></div>
+    
   </div>
 
 </main>
@@ -112,12 +138,14 @@
   position: relative;
   width: 100vw;
   height: 100vh;
+
 }
 
 .album_container {
   position: absolute;
   width: auto;
   height: auto;
+  animation: float 4s ease-in-out infinite;
 }
 
 .bubble {
@@ -125,6 +153,19 @@
   width: auto;
   height: auto;
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px); /* Subir 20px */
+  }
+  100% {
+    transform: translateY(0); /* Volver a la posición original */
+  }
+}
+
 .album {
   display: flex;
   width: auto;
@@ -142,7 +183,7 @@
   width: 100px;
   height: 100px;
   object-fit: contain;
-  z-index: 1;
+  z-index: 1ñ
 }
 
 .circle {
@@ -151,6 +192,7 @@
   filter: blur(10px);
   transform: translate(15%, 15%);
   z-index: 0;
+  /* Animación de flotación */
 }
 
 .album p {
