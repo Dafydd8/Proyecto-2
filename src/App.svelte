@@ -36,7 +36,7 @@
     const cubiculos = [[10,10], [60,10], [10,50], [60,50], [35,30]];
     for (var i = 0; i < n; i++) {
       const x = (1+ (Math.random())*0.3) * cubiculos[i][0]+0.5;
-      const y = (1+ (Math.random())*0.3) * cubiculos[i][1]+1;
+      const y = (1+ (Math.random())*0.3) * cubiculos[i][1]+2;
       posiciones.push([x, y]);
     }
     return posiciones;
@@ -113,10 +113,24 @@
               <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
             {/if}
             {#if genres(album.Generos).length == 1}  
-              <div class="circle" style="transform: translate(-5%, -7.5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+              <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
             {/if}
           {/each}
           <img src="./public/images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+          {#if album.Valoracion == 1}  
+            <img src="./public/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+          {/if}
+          {#if album.Valoracion == 2}  
+            <img src="./public/images/dashed_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+          {/if}
+          {#if album.Valoracion == 4}  
+            <img src="./public/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+          {/if}
+          {#if album.aoty == 1}  
+            <div class="duck">
+              <img src="./public/images/patito.png" alt="Circle" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
+            </div>
+          {/if}
         </div>
         <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
       </div>
@@ -152,6 +166,8 @@
   position: relative;
   width: auto;
   height: auto;
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes float {
@@ -164,6 +180,28 @@
   100% {
     transform: translateY(0); /* Volver a la posición original */
   }
+}
+
+@keyframes bounce2 {
+  0%, 25%, 80%, 100% {
+    transform: translateY(0) rotateZ(0deg); /* Posición inicial, sin rotación */
+  }
+  40% {
+    transform: translateY(-30px) rotateZ(-360deg); /* Salto hacia arriba y rotación hacia atrás */
+  }
+  52% {
+    transform: rotateZ(0deg); /* Salto hacia arriba y rotación hacia atrás */
+  }
+  60% {
+    transform: translateY(-7.5px) ; /* Comienza a bajar, con rotación hacia atrás */
+  }
+}
+
+.duck {
+  animation: bounce2 2s infinite;
+  position: absolute;
+  z-index: 2;
+  top: -20%;
 }
 
 .album {
@@ -180,10 +218,7 @@
 
 .bubble img {
   position: relative;
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  z-index: 1ñ
+  z-index: 1;
 }
 
 .circle {
@@ -197,7 +232,7 @@
 
 .album p {
   color: white;
-  margin-top: 10px;
+  margin-top: 20px;
   font-size: 14px;
   position: absolute;
   top: 95%;
