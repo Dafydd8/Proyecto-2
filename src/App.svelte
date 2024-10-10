@@ -187,7 +187,7 @@
     transform: translateY(0) rotateZ(0deg); /* Posición inicial, sin rotación */
   }
   40% {
-    transform: translateY(-30px) rotateZ(-360deg); /* Salto hacia arriba y rotación hacia atrás */
+    transform: translateY(-150%) rotateZ(-360deg); /* Salto hacia arriba y rotación hacia atrás */
   }
   52% {
     transform: rotateZ(0deg); /* Salto hacia arriba y rotación hacia atrás */
