@@ -110,7 +110,7 @@
               <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
             {/if}
           {/each}
-          <img src="./public/images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+          <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
           {#if album.Valoracion == 1}  
             <img src="./public/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
           {/if}
@@ -235,12 +235,6 @@
 .album span {
   font-size: 12px;
   color: #ccc;
-}
-
-.filler {
-  background-color: transparent;
-  width: 120px;
-  height: 120px;
 }
 
 </style>
