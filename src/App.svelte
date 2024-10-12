@@ -98,7 +98,35 @@
     targets.forEach((el) => {
       observer.observe(el);
     });
+    
+    const container = document.querySelector('.container');
+    let isScrolling = false;
+    const handleWheel = (event) => {
+      if (!isScrolling) {
+        isScrolling = true;
+        if (event.deltaY > 0) {
+          // Scroll hacia abajo
+          container.scrollBy({
+            top: window.innerHeight, // Desplazarse hacia abajo una página
+            behavior: 'smooth'
+          });
+        } else {
+          // Scroll hacia arriba
+          container.scrollBy({
+            top: -window.innerHeight, // Desplazarse hacia arriba una página
+            behavior: 'smooth'
+          });
+        }
+        // Restablecer el estado después de un tiempo
+        setTimeout(() => {
+          isScrolling = false;
+        }, 1000); // Ajusta el tiempo según sea necesario
+      }
+      event.preventDefault(); // Prevenir el comportamiento predeterminado
+    };
+    
   });
+
 
 </script>
 
@@ -166,7 +194,7 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transition: all 1s ease-in-out;
   }
 
   .album_container {
