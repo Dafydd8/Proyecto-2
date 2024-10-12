@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
   import * as d3 from "d3"
   import albums from "/src/data/albums_copy.csv"
-  
-  // import atletas from "/src/data/athletes.json"
 
   let streams = [];
   let anios = [];
@@ -16,6 +14,15 @@
 
   for (let i = 0; i < 21; i++){
     anios.push(2003+i);
+  }
+
+  const color_genero = {
+    "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
+    "Pop": ["210",	"111",	"235", "0.75"],
+    "Rock": ["210",	"88",	"11", "0.75"],
+    "R&B/Soul": ["1",	"151",	"246", "0.75"],
+    "Latin/Regueton": ["252",	"186",	"4", "0.75"],
+    "Otros": ["95",	"205",	"138", "0.75"],
   }
 
   let bubble_size = d3
@@ -67,16 +74,6 @@
   //console.log(posiciones);
   //generarPosiciones(5, posiciones);
   //console.log(posiciones);
-  
-
-  const color_genero = {
-    "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
-    "Pop": ["210",	"111",	"235", "0.75"],
-    "Rock": ["210",	"88",	"11", "0.75"],
-    "R&B/Soul": ["1",	"151",	"246", "0.75"],
-    "Latin/Regueton": ["252",	"186",	"4", "0.75"],
-    "Otros": ["95",	"205",	"138", "0.75"],
-  }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -93,6 +90,32 @@
   }
   );
 
+  const handleWheel = (event) => {
+    if (!isScrolling) {
+      isScrolling = true;
+      container.removeEventListener('wheel', handleWheel);
+      if (event.deltaY > 0) {
+        // Scroll hacia abajo
+        container.scrollBy({
+          top: window.innerHeight, // Desplazarse hacia abajo una página
+          behavior: 'smooth'
+        });
+      } else {
+        // Scroll hacia arriba
+        container.scrollBy({
+          top: -window.innerHeight, // Desplazarse hacia arriba una página
+          behavior: 'smooth'
+        });
+      }
+      // Restablecer el estado después de un tiempo
+      setTimeout(() => {
+        isScrolling = false;
+        container.addEventListener('wheel', handleWheel);
+      }, 0); // Ajusta el tiempo según sea necesario
+    }
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     const targets = document.querySelectorAll(".page");
     targets.forEach((el) => {
@@ -100,31 +123,8 @@
     });
     
     const container = document.querySelector('.container');
-    let isScrolling = false;
-    const handleWheel = (event) => {
-      if (!isScrolling) {
-        isScrolling = true;
-        if (event.deltaY > 0) {
-          // Scroll hacia abajo
-          container.scrollBy({
-            top: window.innerHeight, // Desplazarse hacia abajo una página
-            behavior: 'smooth'
-          });
-        } else {
-          // Scroll hacia arriba
-          container.scrollBy({
-            top: -window.innerHeight, // Desplazarse hacia arriba una página
-            behavior: 'smooth'
-          });
-        }
-        // Restablecer el estado después de un tiempo
-        setTimeout(() => {
-          isScrolling = false;
-        }, 1000); // Ajusta el tiempo según sea necesario
-      }
-      event.preventDefault(); // Prevenir el comportamiento predeterminado
-    };
-    
+    let isScrolling = false;   
+    container.addEventListener('wheel', handleWheel); 
   });
 
 
