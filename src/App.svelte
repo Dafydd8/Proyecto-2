@@ -73,28 +73,22 @@
 
   var scrolling = false;
 
-  // Función para manejar el scroll y cambiar de año
+  // Función para manejar la animación de cambio de año
   function handleScroll(event) {
-    if (scrolling) return; // Evita que el scroll se dispare muchas veces seguidas
+    if (scrolling) return;
 
     if (event.deltaY > 0 && currentYear < maxYear) {
-      currentYear++;
+      currentYear += 1;
     } else if (event.deltaY < 0 && currentYear > 2003) {
-      currentYear--;
+      currentYear -= 1;
     }
-    console.log(currentYear);
+
     scrolling = true;
-    
-    // Resetea el flag después de un breve delay
-    setTimeout(() => {
-      scrolling = false;
-    }, 300);
+    setTimeout(() => scrolling = false, 500);
   }
 
-  // Detectar el evento de scroll
   onMount(() => {
     window.addEventListener("wheel", handleScroll);
-
     return () => {
       window.removeEventListener("wheel", handleScroll);
     };
@@ -103,9 +97,9 @@
 </script>
 
 <main>
-  <div class="container">
+  <div class="container"> 
     {#each albums_of(currentYear) as album, index}
-    <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">
+    <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
       <div class="album">
         <div class="bubble" >
           {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
@@ -136,8 +130,8 @@
       </div>
     </div>
     {/each}
-    
   </div>
+  
 
 </main>
 
