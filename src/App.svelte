@@ -20,8 +20,8 @@
 
   let bubble_size = d3
     .scaleRadial()
-    .domain([0, d3.max(streams)])
-    .range([0, 200])
+    .domain([d3.min(streams), d3.max(streams)])
+    .range([85, 200])
 
   function albums_of(anio){
     const begin = (anio - 2003)*5;
@@ -37,10 +37,10 @@
 
   function generarPosiciones(n, pos) {
     console.log("antes",pos);
-    const cubiculos = [[-20,-20], [20,-20], [-5,-5], [-30,20], [10,20]];
+    const cubiculos = [[-12.5,-20], [-10,20], [-1,-1], [10,20], [12.5,-20]];
     for (var i = 0; i < n; i++) {
-      const x = (1+ (Math.random())*0.4) * cubiculos[i][0];
-      const y = (1+ (Math.random())*0.4) * cubiculos[i][1]-5;
+      const x = (1+ (Math.random())*0.5) * cubiculos[i][0];
+      const y = (1+ (Math.random())*0.5) * cubiculos[i][1]-5;
       pos[i] = [x,y];
     }
     console.log("desp",pos);
@@ -110,6 +110,12 @@
 
 <main>
   <div class="container">
+    <div class="page">
+      <h1>Musical Bubbles</h1>
+    </div>
+    <div class="page">
+      <h1>cheat sheet</h1>
+    </div>
     {#each anios as anio}
       <div class="page">
         {#each albums_of(anio) as album, index}
@@ -156,14 +162,14 @@
     width: 100vw;
     height: 100vh;
   }
-
+  
   .page {
+    padding: 2rem;
     width: auto;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-
   }
 
   .album_container {
