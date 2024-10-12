@@ -6,3 +6,7 @@ body {
     overflow: hidden;
     font-family: Arial, sans-serif;
 }
+
+#feedback-toolbar {
+    display: none;
+}
