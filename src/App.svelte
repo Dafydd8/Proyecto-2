@@ -36,14 +36,12 @@
   }
 
   function generarPosiciones(n, pos) {
-    console.log("antes",pos);
     const cubiculos = [[-12.5,-20], [-10,20], [-1,-1], [10,20], [12.5,-20]];
     for (var i = 0; i < n; i++) {
       const x = (1+ (Math.random())*0.5) * cubiculos[i][0];
       const y = (1+ (Math.random())*0.5) * cubiculos[i][1]-5;
       pos[i] = [x,y];
     }
-    console.log("desp",pos);
   }
 
   function posicion_circulos(n) {
@@ -62,17 +60,14 @@
     
     return vertices;
   }
-
+  
   let posiciones = [[0,0], [0,0], [0,0], [0,0], [0,0]];
   //console.log(posiciones);
   generarPosiciones(5, posiciones);
   //console.log(posiciones);
-  generarPosiciones(5, posiciones);
+  //generarPosiciones(5, posiciones);
   //console.log(posiciones);
-
-  function cambiar(arreglo){
-    arreglo[0] = arreglo[0]+1;
-  }
+  
 
   const color_genero = {
     "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
@@ -83,27 +78,26 @@
     "Otros": ["95",	"205",	"138", "0.75"],
   }
 
-  var scrolling = false;
-
-  // Función para manejar la animación de cambio de año
-  function handleScroll(event) {
-    if (scrolling) return;
-
-    if (event.deltaY > 0 && currentYear < maxYear) {
-      currentYear += 1;
-    } else if (event.deltaY < 0 && currentYear > 2003) {
-      currentYear -= 1;
-    }
-
-    scrolling = true;
-    setTimeout(() => scrolling = false, 500);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        console.log(entry);
+        entry.target.classList.add("show");
+      } else {
+        entry.target.classList.remove("show");
+      }
+    });
+  },
+  {
+    threshold: 0.5
   }
+  );
 
-  onMount(() => {
-    window.addEventListener("wheel", handleScroll);
-    return () => {
-      window.removeEventListener("wheel", handleScroll);
-    };
+  document.addEventListener('DOMContentLoaded', () => {
+    const targets = document.querySelectorAll(".page");
+    targets.forEach((el) => {
+      observer.observe(el);
+    });
   });
 
 </script>
@@ -157,19 +151,22 @@
 
 <style>
   .container {
-    margin-left: 0px;
-    overflow-y: auto;
-    width: 100vw;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    width: 100%;
     height: 100vh;
   }
   
   .page {
+    scroll-snap-align: start;
     padding: 2rem;
-    width: auto;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
   }
 
   .album_container {
