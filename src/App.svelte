@@ -97,6 +97,7 @@
 </script>
 
 <main>
+  <h1 style="color:white; text-align:center">{currentYear}</h1>
   <div class="container"> 
     {#each albums_of(currentYear) as album, index}
     <div class="album_container" style="top: {posiciones[index][1]}%; left: {posiciones[index][0]}%; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
