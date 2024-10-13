@@ -81,8 +81,10 @@
     const numFillBubbles = parseInt(d3.randomUniform(15,21)(1)); // Número de burbujas de relleno
     for (let i = 0; i < numFillBubbles; i++) {
       const radius = parseInt(d3.randomUniform(10,40)(1)); // Tamaño aleatorio
-      const x = Math.random() * (window.innerWidth - radius * 2) + radius;
-      const y = Math.random() * (window.innerHeight - radius * 2) + radius;
+      //const x = Math.random() * (window.innerWidth - radius * 2) + radius;
+      const x = d3.randomUniform(-50, window.innerWidth-50)(1);
+      const y = d3.randomUniform(-50, window.innerHeight)(1);
+      //const y = Math.random() * (window.innerHeight - radius * 2) + radius;
       const newBubble = {"x": x, "y": y, "radius": radius};
       if (!isOverlapping(newBubble, main_bubbles)) {
         fillBubbles.push(newBubble);
@@ -252,6 +254,7 @@
 <style>
   .container {
     scroll-snap-type: y mandatory;
+    overflow: hidden;
     overflow-y: scroll;
     width: 100%;
     height: 100vh;
