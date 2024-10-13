@@ -43,12 +43,54 @@
   }
 
   function generarPosiciones(n, pos) {
-    const cubiculos = [[-12.5,-20], [-10,20], [-1,-1], [10,20], [12.5,-20]];
+    const ancho = window.innerWidth;
+    const cubiculos = [[ancho*0.1,15], [ancho*0.7,25], [ancho*0.45,35], [ancho*0.25,65], [ancho*0.6,60]];
     for (var i = 0; i < n; i++) {
-      const x = (1+ (Math.random())*0.5) * cubiculos[i][0];
-      const y = (1+ (Math.random())*0.5) * cubiculos[i][1]-5;
+      const x = cubiculos[i][0];
+      const y = cubiculos[i][1];
       pos[i] = [x,y];
     }
+  }
+
+  function isOverlapping(newBubble, main_bubbles) {
+    const A = newBubble.x;
+    const B = newBubble.y;
+    const C = newBubble.x + newBubble.radius * 2;
+    const D = newBubble.y + newBubble.radius * 2; 
+    return main_bubbles.some(mainBubble => {
+      const rect = mainBubble.getBoundingClientRect();
+      const rect_text = mainBubble.querySelector("p").getBoundingClientRect();
+      const a = rect.left-50;
+      const b = (rect.top % window.innerHeight)-50;
+      const c = a + rect.width+100;
+      const d = b + rect.height+rect_text.height+100; 
+
+      const superopone = (
+        (a<A && A<c && b<B && B<d) ||
+        (a<A && A<c && b<D && D<d) ||
+        (a<C && C<c && b<B && B<d) ||
+        (a<C && C<c && b<D && D<d)
+      );
+
+      return superopone;
+    });
+  }
+
+  function generateFillBubbles(main_bubbles) {
+    const fillBubbles = [];
+    const numFillBubbles = parseInt(d3.randomUniform(15,21)(1)); // Número de burbujas de relleno
+    for (let i = 0; i < numFillBubbles; i++) {
+      const radius = parseInt(d3.randomUniform(10,40)(1)); // Tamaño aleatorio
+      const x = Math.random() * (window.innerWidth - radius * 2) + radius;
+      const y = Math.random() * (window.innerHeight - radius * 2) + radius;
+      const newBubble = {"x": x, "y": y, "radius": radius};
+      if (!isOverlapping(newBubble, main_bubbles)) {
+        fillBubbles.push(newBubble);
+      } else {
+        i--; // Si hay superposición, intenta nuevamente
+      }
+    }
+    return fillBubbles;
   }
 
   function posicion_circulos(n) {
@@ -78,7 +120,6 @@
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        console.log(entry);
         entry.target.classList.add("show");
       } else {
         entry.target.classList.remove("show");
@@ -116,6 +157,8 @@
     event.preventDefault(); // Prevenir el comportamiento predeterminado
   };
 
+
+  let fill_bubbles = [];
   document.addEventListener('DOMContentLoaded', () => {
     const targets = document.querySelectorAll(".page");
     targets.forEach((el) => {
@@ -123,53 +166,82 @@
     });
     
     const container = document.querySelector('.container');
-    let isScrolling = false;   
-    container.addEventListener('wheel', handleWheel); 
-  });
+    var isScrolling = false;   
+    //container.addEventListener('wheel', handleWheel); 
 
+    const paginas = document.querySelectorAll('.vis');
+    for (let i = 0; i < paginas.length; i++) {
+      const filling = document.createElement('div');
+      filling.className = 'filling';
+      let mainBubbles = Array.from(paginas[i].querySelectorAll(".album_container"));
+      fill_bubbles = generateFillBubbles(mainBubbles);
+      fill_bubbles.forEach(bubble => {
+        const bubbleElement = document.createElement('div');
+        bubbleElement.className = 'bubble_filler';
+        bubbleElement.style.left = `${bubble.x}px`;
+        bubbleElement.style.top = `${bubble.y}px`;
+        bubbleElement.style.animationDelay = `${Math.random() * 3}s`;
+        bubbleElement.style.animationDuration = `${4 + Math.random() * 2}s`;
+        bubbleElement.style.zIndex = -1;
+        bubbleElement.style.opacity = d3.min([1, d3.randomUniform(0.1,0.5)(1)+bubble.radius/100]);
+        const imagen = document.createElement('img');
+        imagen.src = 'images/burbuja.png';
+        imagen.alt = 'Bubble';
+        imagen.style.position = 'absolute';
+        imagen.style.maxWidth = `${bubble.radius*2}px`;
+        imagen.style.height = 'auto';
+        imagen.position = 'absolute';
+        bubbleElement.appendChild(imagen);
+        filling.appendChild(bubbleElement);
+      });
+      paginas[i].appendChild(filling);
+    }
+  });
 
 </script>
 
 <main>
   <div class="container">
-    <div class="page">
+    <div class="page intro">
       <h1>Musical Bubbles</h1>
     </div>
-    <div class="page">
+    <div class="page intro">
       <h1>cheat sheet</h1>
     </div>
     {#each anios as anio}
-      <div class="page">
-        {#each albums_of(anio) as album, index}
-          <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {posiciones[index][1]}%; left: {posiciones[index][0]}%; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
-            <div class="bubble">
-              {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
-                {#if genres(album.Generos).length != 1}
-                  <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+      <div class="page vis">
+        <div class="info">
+          {#each albums_of(anio) as album, index}
+            <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {posiciones[index][1]}%; left: {posiciones[index][0]}px; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
+              <div class="bubble">
+                {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
+                  {#if genres(album.Generos).length != 1}
+                    <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                  {/if}
+                  {#if genres(album.Generos).length == 1}  
+                    <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                  {/if}
+                {/each}
+                <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+                {#if album.Valoracion == 1}  
+                  <img src="/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
-                {#if genres(album.Generos).length == 1}  
-                  <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                {#if album.Valoracion == 2}  
+                  <img src="/images/dashed_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
-              {/each}
-              <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
-              {#if album.Valoracion == 1}  
-                <img src="/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-              {/if}
-              {#if album.Valoracion == 2}  
-                <img src="/images/dashed_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-              {/if}
-              {#if album.Valoracion == 4}  
-                <img src="/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-              {/if}
-              {#if album.aoty == 1}  
-                <div class="duck">
-                  <img src="/images/patito.png" alt="Duck" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
-                </div>
-              {/if}
+                {#if album.Valoracion == 4}  
+                  <img src="/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+                {/if}
+                {#if album.aoty == 1}  
+                  <div class="duck">
+                    <img src="/images/patito.png" alt="Duck" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
+                  </div>
+                {/if}
+              </div>
+              <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
             </div>
-            <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
     {/each}
   </div>
@@ -191,17 +263,29 @@
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
     opacity: 0;
     transition: all 1s ease-in-out;
   }
 
-  .album_container {
+  .intro {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .album_container {
+    position: absolute;
     width: auto;
     height: auto;
-    animation: float 4s ease-in-out infinite;
+    animation: float ease-in-out infinite;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -215,18 +299,6 @@
     height: auto;
     display: flex;
     justify-content: center;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-20px); /* Subir 20px */
-    }
-    100% {
-      transform: translateY(0); /* Volver a la posición original */
-    }
   }
 
   @keyframes bounce2 {
@@ -270,6 +342,7 @@
     font-size: 14px;
     position: absolute;
     top: 95%;
+    z-index: 1;
   }
 
   .album_container span {

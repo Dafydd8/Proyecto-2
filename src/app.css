@@ -10,3 +10,28 @@ body {
 .show {
     opacity: 1 !important;
 }
+
+.bubble_filler {
+    position: absolute;
+    width: auto;
+    height: auto;
+    animation: float ease-in-out infinite;
+    text-align: center;
+}
+
+.filling {
+    position: relative;
+    display: flex;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px); /* Subir 20px */
+    }
+    100% {
+        transform: translateY(0); /* Volver a la posición original */
+    }
+}
