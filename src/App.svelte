@@ -42,14 +42,25 @@
     return rta;
   }
 
-  function generarPosiciones(n, pos) {
+  function generarPosiciones(anio) {
+    let rv = [];
     const ancho = window.innerWidth;
-    const cubiculos = [[ancho*0.1,15], [ancho*0.7,25], [ancho*0.45,35], [ancho*0.25,55], [ancho*0.6,55]];
-    for (var i = 0; i < n; i++) {
-      const x = d3.randomUniform(-25,25)() + cubiculos[i][0];
-      const y = d3.randomUniform(-10,10)() + cubiculos[i][1];
-      pos[i] = [x,y];
+    const alto = window.innerHeight;
+    const curr_albums = albums_of(anio);
+    let sizes = [];
+    for (let i = 0; i < 5; i++) {
+      sizes.push(bubble_size(parseInt(curr_albums[i].Streams)));
     }
+    const cubiculos = [[ancho*0.1,alto*0.15], [ancho*0.75,alto*0.25], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.60], [ancho*0.6,alto*0.65]];
+    for (var i = 0; i < 5; i++) {
+      let x = d3.randomUniform(-25,25)() + cubiculos[i][0];
+      let y = d3.randomUniform(-25,25)() + cubiculos[i][1];
+      while (y + sizes[i] + 120 > alto){
+        y -= 25;
+      }
+      rv.push([x, y]);
+    }
+    return rv;
   }
 
   function isOverlapping(newBubble, main_bubbles) {
@@ -112,12 +123,14 @@
     return vertices;
   }
   
-  let posiciones = [[0,0], [0,0], [0,0], [0,0], [0,0]];
-  //console.log(posiciones);
-  generarPosiciones(5, posiciones);
-  //console.log(posiciones);
-  //generarPosiciones(5, posiciones);
-  //console.log(posiciones);
+  let posiciones = [];
+  for (let i = 0; i < 21; i++) {
+    posiciones.push(generarPosiciones(2003+i));
+  }
+
+  function posiciones_for(anio){
+    return posiciones[anio-2003];
+  }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -214,7 +227,7 @@
       <div class="page vis">
         <div class="info">
           {#each albums_of(anio) as album, index}
-            <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {posiciones[index][1]}%; left: {posiciones[index][0]}px; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
+            <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {(posiciones_for(anio))[index][1]}px; left: {(posiciones_for(anio))[index][0]}px; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
               <div class="bubble">
                 {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
                   {#if genres(album.Generos).length != 1}
