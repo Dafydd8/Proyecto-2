@@ -44,10 +44,10 @@
 
   function generarPosiciones(n, pos) {
     const ancho = window.innerWidth;
-    const cubiculos = [[ancho*0.1,15], [ancho*0.7,25], [ancho*0.45,35], [ancho*0.25,65], [ancho*0.6,60]];
+    const cubiculos = [[ancho*0.1,15], [ancho*0.7,25], [ancho*0.45,35], [ancho*0.25,55], [ancho*0.6,55]];
     for (var i = 0; i < n; i++) {
-      const x = cubiculos[i][0];
-      const y = cubiculos[i][1];
+      const x = d3.randomUniform(-25,25)() + cubiculos[i][0];
+      const y = d3.randomUniform(-10,10)() + cubiculos[i][1];
       pos[i] = [x,y];
     }
   }
