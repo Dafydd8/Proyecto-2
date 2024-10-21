@@ -122,6 +122,18 @@
     
     return vertices;
   }
+
+  function recuadro_valoracion(valoracion){
+    if (valoracion == 1){
+      return "/images/circle.png";
+    }
+    if (valoracion == 2){
+      return "/images/dashed_circle.png";
+    }
+    if (valoracion == 4){
+      return "/images/picos_circle.png";
+    }
+  }
   
   let posiciones = [];
   for (let i = 0; i < 21; i++) {
@@ -238,14 +250,8 @@
                   {/if}
                 {/each}
                 <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
-                {#if album.Valoracion == 1}  
-                  <img src="/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-                {/if}
-                {#if album.Valoracion == 2}  
-                  <img src="/images/dashed_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-                {/if}
-                {#if album.Valoracion == 4}  
-                  <img src="/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+                {#if album.Valoracion != 3}  
+                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
                 {#if album.aoty == 1}  
                   <div class="duck">
