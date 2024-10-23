@@ -269,9 +269,9 @@
           {/each}
         </div>
         <div class="help">
-          <img src="/images/boton_help.png" alt="help" style="width: 50px; height:50px">          
-          <div class="help_cuadro">
-            <img src="/images/patito.png" alt="mini cheat_sheet" style="width: 50px; height:50px">
+          <img src="/images/boton_help_blue.png" alt="help" style="width: 35px; height:35px">          
+          <div class="help_cuadro" style="width: 120vh; height:100%">
+            <img src="/images/cheat guide.png" alt="mini cheat_sheet" style="border-radius: 10px;border: 2px solid white;">
           </div>
         </div>
       </div>
@@ -280,6 +280,8 @@
 </main>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
   .container {
     scroll-snap-type: y mandatory;
     overflow: hidden;
@@ -368,17 +370,25 @@
   }
 
   .album_container p {
+    font-family: "Karla", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
     color: white;
     margin-top: 20px;
-    font-size: 14px;
+    font-size: 16px;
     position: absolute;
     top: 95%;
     z-index: 1;
   }
 
   .album_container span {
-    font-size: 12px;
-    color: #ccc;
+    font-family: "Karla", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    color: #ebeaea;
   }
 
   .anio {
@@ -392,7 +402,15 @@
     max-height: 100px;
   }
 
-  .anio h1 {
+  @font-face {
+    font-family: 'Bubbly';
+    src: url('/fonts/ShineBubbleDeco-MVKJx.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  h1 {
+    font-family: 'Bubbly', sans-serif;
     font-size: 3rem;
     color: white;
   }
@@ -401,9 +419,12 @@
     position:relative; 
     left: 87.5%;
   } 
-  
+
   .help_cuadro {
+    position:absolute;
+    transform: translateX(-100%);
     visibility: hidden;
+    max-height: 100%;
     z-index: 3;
   }
 
