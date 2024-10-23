@@ -5,6 +5,8 @@
 
   let streams = [];
   let anios = [];
+  let anios_every3 = [];
+  let aux = [];
   let currentYear = 2003; // Año inicial
   let maxYear = 2023; // Año máximo
 
@@ -14,6 +16,11 @@
 
   for (let i = 0; i < 21; i++){
     anios.push(2003+i);
+    aux.push(2003+i);
+    if(i % 3 == 2 && i != 0){
+      anios_every3.push(aux);
+      aux = [];
+    }
   }
 
   const color_genero = {
@@ -28,7 +35,7 @@
   let bubble_size = d3
     .scaleRadial()
     .domain([d3.min(streams), d3.max(streams)])
-    .range([85, 200])
+    .range([80, 150])
 
   function albums_of(anio){
     const begin = (anio - 2003)*5;
@@ -43,50 +50,68 @@
   }
 
   function generarPosiciones(anio) {
-    let rv = [];
-    const ancho = window.innerWidth;
-    const alto = window.innerHeight;
-    const curr_albums = albums_of(anio);
-    let sizes = [];
-    for (let i = 0; i < 5; i++) {
-      sizes.push(bubble_size(parseInt(curr_albums[i].Streams)));
-    }
-    const cubiculos = [[ancho*0.1,alto*0.15], [ancho*0.75,alto*0.25], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.60], [ancho*0.6,alto*0.65]];
-    for (var i = 0; i < 5; i++) {
-      let x = d3.randomUniform(-25,25)() + cubiculos[i][0];
-      let y = d3.randomUniform(-25,25)() + cubiculos[i][1];
-      while (y + sizes[i] + 120 > alto){
-        y -= 25;
+  let rv = [];
+  const ancho = window.innerWidth;
+  const alto = window.innerHeight;
+  const curr_albums = albums_of(anio);
+  const tercioAncho = ancho / 3; // Ancho del tercio de pantalla
+  const offsetX = ((anio - 2003) % 3) * tercioAncho; // Offset X basado en el año
+  
+  // Número máximo de intentos para evitar bucles infinitos
+  const MAX_INTENTOS = 100;
+  
+  for (let i = 0; i < 5; i++) {
+    const size = bubble_size(parseInt(curr_albums[i].Streams));
+    let intentos = 0;
+    let posicionEncontrada = false;
+    
+    while (!posicionEncontrada && intentos < MAX_INTENTOS) {
+      // Genera posición dentro del tercio correspondiente
+      let x = offsetX + d3.randomUniform(size, tercioAncho - size)(1);
+      let y = d3.randomUniform(size, alto - size - 100)(1);
+      
+      let newBubble = {
+        x: x,
+        y: y,
+        diametro: size * 2 // Consideramos el diámetro completo para el espacio
+      };
+      
+      // Verifica superposición con margen de seguridad
+      if (!isOverlapping(newBubble, rv)) {
+        rv.push(newBubble);
+        posicionEncontrada = true;
       }
-      rv.push([x, y]);
+      
+      intentos++;
     }
-    return rv;
+    
+    // Si no se encontró posición después de MAX_INTENTOS, usa una posición de respaldo
+    if (!posicionEncontrada) {
+      rv.push({
+        x: offsetX + (tercioAncho / 2),
+        y: (i + 1) * (alto / 6),
+        diametro: size * 2
+      });
+    }
   }
+  
+  return rv;
+}
 
-  function isOverlapping(newBubble, main_bubbles) {
-    const A = newBubble.x;
-    const B = newBubble.y;
-    const C = newBubble.x + newBubble.radius * 2;
-    const D = newBubble.y + newBubble.radius * 2; 
-    return main_bubbles.some(mainBubble => {
-      const rect = mainBubble.getBoundingClientRect();
-      const rect_text = mainBubble.querySelector("p").getBoundingClientRect();
-      const a = rect.left-50;
-      const b = (rect.top % window.innerHeight)-50;
-      const c = a + rect.width+100;
-      const d = b + rect.height+rect_text.height+100; 
 
-      const superopone = (
-        (a<A && A<c && b<B && B<d) ||
-        (a<A && A<c && b<D && D<d) ||
-        (a<C && C<c && b<B && B<d) ||
-        (a<C && C<c && b<D && D<d)
-      );
-
-      return superopone;
-    });
-  }
-
+function isOverlapping(newBubble, existingBubbles) {
+  const MARGEN_SEGURIDAD = 20; // Pixels de margen extra entre burbujas
+  
+  return existingBubbles.some(existingBubble => {
+    const dx = newBubble.x - existingBubble.x;
+    const dy = newBubble.y - existingBubble.y;
+    const distancia = Math.sqrt(dx * dx + dy * dy);
+    const distanciaMinima = (newBubble.diametro / 2) + (existingBubble.diametro / 2) + MARGEN_SEGURIDAD;
+    
+    return distancia < distanciaMinima;
+  });
+}
+/*
   function generateFillBubbles(main_bubbles) {
     const fillBubbles = [];
     const numFillBubbles = parseInt(d3.randomUniform(15,21)(1)); // Número de burbujas de relleno
@@ -105,7 +130,7 @@
     }
     return fillBubbles;
   }
-
+*/
   function posicion_circulos(n) {
     const vertices = [];
     const r = 25;
@@ -197,6 +222,7 @@
     //container.addEventListener('wheel', handleWheel); 
 
     const paginas = document.querySelectorAll('.vis');
+    /*
     for (let i = 0; i < paginas.length; i++) {
       const filling = document.createElement('div');
       filling.className = 'filling';
@@ -222,7 +248,7 @@
         filling.appendChild(bubbleElement);
       });
       paginas[i].appendChild(filling);
-    }
+    }*/
   });
 
 </script>
@@ -235,34 +261,36 @@
     <div class="page intro">
       <h1>cheat sheet</h1>
     </div>
-    {#each anios as anio}
+    {#each anios_every3 as tres_anios}
       <div class="page vis">
-        <div class="info">
-          {#each albums_of(anio) as album, index}
-            <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {(posiciones_for(anio))[index][1]}px; left: {(posiciones_for(anio))[index][0]}px; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
-              <div class="bubble">
-                {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
-                  {#if genres(album.Generos).length != 1}
-                    <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+        {#each tres_anios as anio, index}
+          <div class="info" style="width: {100/3}%">
+            {#each albums_of(anio) as album, index}
+              <div class="album_container" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px; top: {(posiciones_for(anio))[index][1]}px; left: {(posiciones_for(anio))[index][0]}px; animation-delay: {Math.random() * 3}s; animation-duration: {4 + Math.random() * 2}s;">      
+                <div class="bubble">
+                  {#each posicion_circulos((genres(album.Generos).length)) as [x, y], index}
+                    {#if genres(album.Generos).length != 1}
+                      <div class="circle" style="left: {x}%; top: {y}% ; width: 75%; height: 75%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                    {/if}
+                    {#if genres(album.Generos).length == 1}  
+                      <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                    {/if}
+                  {/each}
+                  <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+                  {#if album.Valoracion != 3}  
+                    <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                   {/if}
-                  {#if genres(album.Generos).length == 1}  
-                    <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
+                  {#if album.aoty == 1}  
+                    <div class="duck">
+                      <img src="/images/patito.png" alt="Duck" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
+                    </div>
                   {/if}
-                {/each}
-                <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
-                {#if album.Valoracion != 3}  
-                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-                {/if}
-                {#if album.aoty == 1}  
-                  <div class="duck">
-                    <img src="/images/patito.png" alt="Duck" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
-                  </div>
-                {/if}
+                </div>
+                <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
               </div>
-              <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
-            </div>
-          {/each}
-        </div>
+            {/each}
+          </div>
+        {/each}
       </div>
     {/each}
   </div>
