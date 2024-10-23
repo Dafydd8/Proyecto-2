@@ -262,7 +262,6 @@
                 {/if}
                 {#if album.Valoracion == 4}  
                   <img src="/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
->>>>>>> official
                 {/if}
                 {#if album.aoty == 1}  
                   <div class="duck">
