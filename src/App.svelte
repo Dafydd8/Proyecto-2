@@ -5,6 +5,7 @@
 
   let streams = [];
   let anios = [];
+  let anios_str = [];
   let currentYear = 2003; // Año inicial
   let maxYear = 2023; // Año máximo
 
@@ -14,6 +15,7 @@
 
   for (let i = 0; i < 21; i++){
     anios.push(2003+i);
+    anios_str.push((2003+i).toString());
   }
 
   const color_genero = {
@@ -223,7 +225,7 @@
     <div class="page intro">
       <h1>cheat sheet</h1>
     </div>
-    {#each anios as anio}
+    {#each anios as anio,index}
       <div class="page vis">
         <div class="info">
           {#each albums_of(anio) as album, index}
@@ -237,7 +239,9 @@
                     <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
                   {/if}
                 {/each}
-                <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+                <a href="https://www.google.com/?hl=es">
+                  <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
+                </a>
                 {#if album.Valoracion == 1}  
                   <img src="/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
@@ -257,11 +261,22 @@
             </div>
           {/each}
         </div>
+        <div class = "anio">
+          {#each anios_str[index] as caracter}
+            <div class="caracter" style="animation: {4+Math.random()*2}s float ease-in-out infinite; animation-delay:{Math.random() * 3}s">
+              <h1>{caracter}</h1>
+            </div>
+          {/each}
+        </div>
+        <div class="help">
+          <img src="/images/boton_help.png" alt="help" style="width: 50px; height:50px">          
+          <div class="help_cuadro">
+            <img src="/images/patito.png" alt="mini cheat_sheet" style="width: 50px; height:50px">
+          </div>
+        </div>
       </div>
     {/each}
   </div>
-  
-
 </main>
 
 <style>
@@ -364,6 +379,36 @@
   .album_container span {
     font-size: 12px;
     color: #ccc;
+  }
+
+  .anio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 85%;
+    left: 85%;
+    max-width: 100px;
+    max-height: 100px;
+  }
+
+  .anio h1 {
+    font-size: 3rem;
+    color: white;
+  }
+
+  .help {
+    position:relative; 
+    left: 87.5%;
+  } 
+  
+  .help_cuadro {
+    visibility: hidden;
+    z-index: 3;
+  }
+
+  .help:hover .help_cuadro {
+    visibility: visible;
   }
 
 </style>

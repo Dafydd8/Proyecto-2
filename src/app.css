@@ -22,6 +22,7 @@ body {
 .filling {
     position: relative;
     display: flex;
+    left: -12.5%;
 }
 
 @keyframes float {
