@@ -91,7 +91,7 @@
 
   function generateFillBubbles(main_bubbles) {
     const fillBubbles = [];
-    const numFillBubbles = parseInt(d3.randomUniform(15,21)(1)); // Número de burbujas de relleno
+    const numFillBubbles = parseInt(d3.randomUniform(50,70)(1)); // Número de burbujas de relleno
     for (let i = 0; i < numFillBubbles; i++) {
       const radius = parseInt(d3.randomUniform(10,40)(1)); // Tamaño aleatorio
       //const x = Math.random() * (window.innerWidth - radius * 2) + radius;
@@ -239,7 +239,7 @@
                     <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
                   {/if}
                 {/each}
-                <a href="https://www.google.com/?hl=es">
+                <a style="z-index:3" href="https://www.google.com/?hl=es">
                   <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
                 </a>
                 {#if album.Valoracion == 1}  
