@@ -262,7 +262,7 @@
       <h1>Musical Bubbles</h1>
     </div>
     <div class="page intro">
-      <h1>cheat sheet</h1>
+      <img src="images/cheatguidedef.png" alt="cheatguide" >
     </div>
     {#each anios as anio,index}
       <div class="page vis">
@@ -282,7 +282,7 @@
                   <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
                 </a>
                 {#if album.Valoracion != 3}  
-                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%); max-width:auto; width: {bubble_size(parseInt(album.Streams))*1.125}px; height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
                 {#if album.aoty == 1}  
                   <div class="duck">
