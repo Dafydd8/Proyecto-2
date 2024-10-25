@@ -16,6 +16,10 @@
     anios_str.push((2003+i).toString());
   }
 
+  function streams_str(numero) {
+    return numero.toLocaleString("es-ES");
+  }
+
   // Diccionario de colores para cada género
   const color_genero = {
     "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
@@ -262,7 +266,7 @@
       <h1>Musical Bubbles</h1>
     </div>
     <div class="page intro">
-      <img src="images/cheatguidedef.png" alt="cheatguide" >
+      <img src="images/cheatguidedef.png" alt="cheatguide" style="height: 100vh">
     </div>
     {#each anios as anio,index}
       <div class="page vis">
@@ -282,7 +286,7 @@
                   <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
                 </a>
                 {#if album.Valoracion != 3}  
-                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%); max-width:auto; width: {bubble_size(parseInt(album.Streams))*1.125}px; height: {bubble_size(parseInt(album.Streams))*1.125}px">
+                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%); max-width:112.5%; width: {bubble_size(parseInt(album.Streams))*1.125}px; height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
                 {#if album.aoty == 1}  
                   <div class="duck">
@@ -291,10 +295,10 @@
                 {/if}
               </div>
               <div class="info_popup" style="top:-50%">
-                <a href="{album.Link}" target="_blank" style="margin:10px; margin-bottom:6.5px">
+                <a href="{album.Link}" target="_blank" style="margin:5px; margin-bottom:1px">
                   <img src="{album.LinkImg}" alt="portada" class="album-img">
                 </a>
-                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Géneros: {generos_str(album.Generos)}</p>
+                <p class="album-info" style="color:black; position:static; font-weight: 600; font-size: 14px">Streams: <span style="color:black; font-size: 14px">{streams_str(album.Streams)}</span><br>Géneros: <span style="color:black; font-size: 14px">{generos_str(album.Generos)}</span></p>
               </div>
               <p style="margin-top:20px;">{album["Album"]} <br><span>{album["Artista"]}</span></p>
             </div>
@@ -309,8 +313,8 @@
         </div>
         <div class="help">
           <img src="/images/boton_help_blue.png" alt="help" class="help_img" style="width: 35px; height:35px">          
-          <div class="help_cuadro" style="width: 120vh; height:100%">
-            <img src="/images/cheat guide.png" alt="mini cheat_sheet" style="border-radius: 10px;border: 2px solid white;">
+          <div class="help_cuadro" style="width: 100vh; height:100%">
+            <img src="/images/lil cheatguide.png" alt="mini cheat_sheet" style="border-radius: 20px;border: 2px solid white;">
           </div>
         </div>
       </div>
@@ -443,6 +447,7 @@
     width: max-content;
     height:auto;
     background-color: white;
+    opacity: 1;
     border-radius: 10px;
     display: flex;
     align-items: center; /* Alinea verticalmente la imagen y el texto */
@@ -451,14 +456,15 @@
   }
 
   .info_popup img {
-    width: 75px;
-    height: 75px;
+    width: 50px;
+    height: 50px;
     border-radius: 10px;
   }
 
   .info_popup p {
     white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-    margin: 10px;
+    margin: 5px;
+    text-align: left;
   }
 
   .duck {
