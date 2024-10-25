@@ -3,11 +3,9 @@
   import * as d3 from "d3"
   import albums from "/src/data/albums_copy.csv"
 
-  let streams = [];
-  let anios = [];
-  let anios_str = [];
-  let currentYear = 2003; // Año inicial
-  let maxYear = 2023; // Año máximo
+  let streams = []; // Lista de streams ordenada como aparecen en el csv
+  let anios = []; // Lista de años
+  let anios_str = []; // Lista de años en formato string
 
   for (let i = 0; i < albums.length; i++) {
     streams.push(parseInt(albums[i].Streams));
@@ -18,6 +16,7 @@
     anios_str.push((2003+i).toString());
   }
 
+  // Diccionario de colores para cada género
   const color_genero = {
     "Hip Hop/Rap": ["195",	"45",	"107", "0.75"],
     "Pop": ["210",	"111",	"235", "0.75"],
@@ -27,11 +26,13 @@
     "Otros": ["95",	"205",	"138", "0.75"],
   }
 
+  // Escala para el tamaño de las burbujas
   let bubble_size = d3
     .scaleRadial()
     .domain([d3.min(streams), d3.max(streams)])
     .range([85, 200])
 
+  //Función para devolver los 5 albums de un año
   function albums_of(anio){
     const begin = (anio - 2003)*5;
     const end = begin + 5;
@@ -39,11 +40,13 @@
     return rta;
   }
 
+  //Función para devolver una lista de los géneros de un album
   function genres(generos){
     const rta = generos.split(";");
     return rta;
   }
 
+  //Función para devolver los géneros de un album en formato string
   function generos_str(generos){
     const generos_list = generos.split(";");
     let rta = "";
@@ -55,6 +58,7 @@
     return rta;
   }
 
+  //Función para asignar posiciones "aleatorias" a las burbujas principales
   function generarPosiciones(anio) {
     let rv = [];
     const ancho = window.innerWidth;
@@ -64,10 +68,13 @@
     for (let i = 0; i < 5; i++) {
       sizes.push(bubble_size(parseInt(curr_albums[i].Streams)));
     }
+    // Definimos posiciones iniciales para las burbujas principales
     const cubiculos = [[ancho*0.1,alto*0.15], [ancho*0.75,alto*0.25], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.60], [ancho*0.6,alto*0.65]];
     for (var i = 0; i < 5; i++) {
-      let x = d3.randomUniform(-25,25)() + cubiculos[i][0];
+      //Modificamos la posición en x y en y leve y aleatoriamente
+      let x = d3.randomUniform(-25,25)() + cubiculos[i][0]; 
       let y = d3.randomUniform(-25,25)() + cubiculos[i][1];
+      // Si la burbuja se sale de la pantalla por abajo, la movemos hacia arriba
       while (y + sizes[i] + 120 > alto){
         y -= 25;
       }
@@ -76,6 +83,7 @@
     return rv;
   }
 
+  //Función para determinar si una burbuja de relleno se está superponiendo con una principal
   function isOverlapping(newBubble, main_bubbles) {
     const A = newBubble.x;
     const B = newBubble.y;
@@ -100,16 +108,17 @@
     });
   }
 
+  //Función para generar burbujas de relleno
   function generateFillBubbles(main_bubbles) {
     const fillBubbles = [];
     const numFillBubbles = parseInt(d3.randomUniform(50,70)(1)); // Número de burbujas de relleno
     for (let i = 0; i < numFillBubbles; i++) {
       const radius = parseInt(d3.randomUniform(10,40)(1)); // Tamaño aleatorio
-      //const x = Math.random() * (window.innerWidth - radius * 2) + radius;
+      //Asignar posicion en x y en y aleatoria
       const x = d3.randomUniform(-50, window.innerWidth-50)(1);
       const y = d3.randomUniform(-50, window.innerHeight)(1);
-      //const y = Math.random() * (window.innerHeight - radius * 2) + radius;
       const newBubble = {"x": x, "y": y, "radius": radius};
+      // Si no hay superposición con una de las principales, agregamos la burbuja
       if (!isOverlapping(newBubble, main_bubbles)) {
         fillBubbles.push(newBubble);
       } else {
@@ -119,6 +128,7 @@
     return fillBubbles;
   }
 
+  //Función para posicionar los círculos de colores en una burbuja principal
   function posicion_circulos(n) {
     const vertices = [];
     const r = 25;
@@ -126,16 +136,15 @@
     if (n === 1) {
       return [[0, 0]]; // Única posición en el centro
     }
-
     for (let k = 0; k < n; k++) {
       const theta = ((2 * Math.PI * k) / n) + Math.PI/2;
       const pos = [r * Math.cos(theta), r * Math.sin(theta)];
       vertices.push(pos);
     }
-    
     return vertices;
   }
 
+  //Función para determinar la imagen de la valoración
   function recuadro_valoracion(valoracion){
     if (valoracion == 1){
       return "/images/circle.png";
@@ -148,15 +157,18 @@
     }
   }
   
+  // Generar las posiciones de las burbujas principales para cada año
   let posiciones = [];
   for (let i = 0; i < 21; i++) {
     posiciones.push(generarPosiciones(2003+i));
   }
 
+  //Devuelve un listado con las posiciones de las burbujas de un año
   function posiciones_for(anio){
     return posiciones[anio-2003];
   }
 
+  //Observador para manejar la intersección de una página con el viewport y poder hacerla visible al scrollear
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -171,6 +183,7 @@
   }
   );
 
+  //Función para manejar el scroll de la página
   const handleWheel = (event) => {
     if (!isScrolling) {
       isScrolling = true;
@@ -197,24 +210,27 @@
     event.preventDefault(); // Prevenir el comportamiento predeterminado
   };
 
-
   let fill_bubbles = [];
+  //Esperar al evento DOMContentLoaded (todo el contenido de la pagina cargado) para ejecutar el código
   document.addEventListener('DOMContentLoaded', () => {
+    // Agregar el observador de intersección a cada página
     const targets = document.querySelectorAll(".page");
     targets.forEach((el) => {
       observer.observe(el);
     });
     
     const container = document.querySelector('.container');
-    var isScrolling = false;   
-    //container.addEventListener('wheel', handleWheel); 
+    var isScrolling = false;
 
+    // Agregar las burbujas de relleno a cada página
     const paginas = document.querySelectorAll('.vis');
     for (let i = 0; i < paginas.length; i++) {
+      //Crear un div para las burbujas de relleno y agregarle su clase
       const filling = document.createElement('div');
       filling.className = 'filling';
-      let mainBubbles = Array.from(paginas[i].querySelectorAll(".album_container"));
-      fill_bubbles = generateFillBubbles(mainBubbles);
+      let mainBubbles = Array.from(paginas[i].querySelectorAll(".album_container")); //Tomar listado de las burbujas principales
+      fill_bubbles = generateFillBubbles(mainBubbles); //Generar burbujas de relleno
+      //Para cada burbuja de relleno, crear un div y agregarle su clase, posición, tamaño etc. y agregarlo al div de relleno
       fill_bubbles.forEach(bubble => {
         const bubbleElement = document.createElement('div');
         bubbleElement.className = 'bubble_filler';
@@ -234,7 +250,7 @@
         bubbleElement.appendChild(imagen);
         filling.appendChild(bubbleElement);
       });
-      paginas[i].appendChild(filling);
+      paginas[i].appendChild(filling); //Agregar el div de relleno a la página actual
     }
   });
 
@@ -299,7 +315,7 @@
         </div>
       </div>
     {/each}
-    <div class="page out">
+    <div class="page outro">
       <div>
         <h1>Desarrollado por</h1>
         <div class="redes_container">
@@ -328,8 +344,6 @@
 </main>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
   .container {
     scroll-snap-type: y mandatory;
     overflow: hidden;
@@ -354,7 +368,7 @@
     text-align: center;
   }
 
-  .out {
+  .outro {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -382,62 +396,9 @@
     justify-content: center;
     text-align: center;
   }
-
-  .bubble {
-    position: relative;
-    width: auto;
-    height: auto;
-    display: flex;
-    justify-content: center;
-  }
-
-  .info_popup {
-    position: absolute;
-    visibility: hidden;
-    z-index: 3;
-    width: max-content;
-    height:auto;
-    background-color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center; /* Alinea verticalmente la imagen y el texto */
-    justify-content: center;
-
-}
-
-  .info_popup img {
-    width: 75px;
-    height: 75px;
-    border-radius: 10px;
-  }
-
-  .info_popup p {
-    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-    margin: 10px;
-  }
-
+  
   .album_container:hover .info_popup {
     visibility: visible;
-  }
-
-  .duck {
-    animation: bounce2 2s infinite;
-    position: absolute;
-    z-index: 2;
-    top: -20%;
-  }
-
-  .bubble img {
-    position: relative;
-    z-index: 1;
-  }
-
-  .circle {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(10px);
-    transform: translate(15%, 15%);
-    z-index: 0;
   }
 
   .album_container p {
@@ -460,6 +421,59 @@
     font-style: normal;
     font-size: 14px;
     color: #ebeaea;
+  }
+
+  .bubble {
+    position: relative;
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bubble img {
+    position: relative;
+    z-index: 1;
+  }
+
+  .info_popup {
+    position: absolute;
+    visibility: hidden;
+    z-index: 3;
+    width: max-content;
+    height:auto;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center; /* Alinea verticalmente la imagen y el texto */
+    justify-content: center;
+
+  }
+
+  .info_popup img {
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+  }
+
+  .info_popup p {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    margin: 10px;
+  }
+
+  .duck {
+    animation: bounce2 2s infinite;
+    position: absolute;
+    z-index: 2;
+    top: -20%;
+  }
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(10px);
+    transform: translate(15%, 15%);
+    z-index: 0;
   }
 
   .anio {

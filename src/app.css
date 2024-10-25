@@ -37,6 +37,8 @@ body {
     }
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 @keyframes bounce2 {
     0%, 25%, 80%, 100% {
         transform: translateY(0) rotateZ(0deg); /* Posición inicial, sin rotación */
