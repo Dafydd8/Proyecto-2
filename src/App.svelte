@@ -251,23 +251,23 @@
                     <div class="circle" style="transform: translate(0%, -5%); width: 110%; height: 110%; background-color: rgba({color_genero[genres(album.Generos)[index]][0]},{color_genero[genres(album.Generos)[index]][1]},{color_genero[genres(album.Generos)[index]][2]},{color_genero[genres(album.Generos)[index]][3]});"></div>
                   {/if}
                 {/each}
-                <a style="z-index:3" href="https://www.google.com/?hl=es">
+                <a style="z-index:2" href="{album.Link}" target="_blank">
                   <img src="images/burbuja.png" alt="Bubble" style="width: {bubble_size(parseInt(album.Streams))}px; height: {bubble_size(parseInt(album.Streams))}px">
                 </a>
-                {#if album.Valoracion == 1}  
-                  <img src="/images/circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-                {/if}
-                {#if album.Valoracion == 2}  
-                  <img src="/images/dashed_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
-                {/if}
-                {#if album.Valoracion == 4}  
-                  <img src="/images/picos_circle.png" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
+                {#if album.Valoracion != 3}  
+                  <img src="{recuadro_valoracion(album.Valoracion)}" alt="Circle" style="position: absolute; transform: translate(0%, -5.5%);max-width: {bubble_size(parseInt(album.Streams))*1.125}px; max-height: {bubble_size(parseInt(album.Streams))*1.125}px">
                 {/if}
                 {#if album.aoty == 1}  
                   <div class="duck">
                     <img src="/images/patito.png" alt="Duck" style="max-width: {bubble_size(parseInt(album.Streams))*0.25}px; max-height: {bubble_size(parseInt(album.Streams))*0.25}px">
                   </div>
                 {/if}
+              </div>
+              <div class="info_popup" style="top:-50%">
+                <a href="{album.Link}" target="_blank">
+                  <img src="{album.LinkImg}" alt="portada" class="album-img">
+                </a>
+                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Generos: {album.Generos}</p>
               </div>
               <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
             </div>
@@ -281,7 +281,7 @@
           {/each}
         </div>
         <div class="help">
-          <img src="/images/boton_help_blue.png" alt="help" style="width: 35px; height:35px">          
+          <img src="/images/boton_help_blue.png" alt="help" class="help_img" style="width: 35px; height:35px">          
           <div class="help_cuadro" style="width: 120vh; height:100%">
             <img src="/images/cheat guide.png" alt="mini cheat_sheet" style="border-radius: 10px;border: 2px solid white;">
           </div>
@@ -346,19 +346,32 @@
     justify-content: center;
   }
 
-  @keyframes bounce2 {
-    0%, 25%, 80%, 100% {
-      transform: translateY(0) rotateZ(0deg); /* Posición inicial, sin rotación */
-    }
-    40% {
-      transform: translateY(-150%) rotateZ(-360deg); /* Salto hacia arriba y rotación hacia atrás */
-    }
-    52% {
-      transform: rotateZ(0deg); /* Salto hacia arriba y rotación hacia atrás */
-    }
-    60% {
-      transform: translateY(-7.5px) ; /* Comienza a bajar, con rotación hacia atrás */
-    }
+  .info_popup {
+    position: absolute;
+    visibility: hidden;
+    z-index: 3;
+    width: max-content;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center; /* Alinea verticalmente la imagen y el texto */
+    justify-content: center;
+}
+
+  .info_popup img {
+    margin:10px;
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+  }
+
+  .info_popup p {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    margin: 10px;
+  }
+
+  .album_container:hover .info_popup {
+    visibility: visible;
   }
 
   .duck {
@@ -392,6 +405,7 @@
     position: absolute;
     top: 95%;
     z-index: 1;
+    text-wrap: nowrap;
   }
 
   .album_container span {
@@ -414,13 +428,6 @@
     max-height: 100px;
   }
 
-  @font-face {
-    font-family: 'Bubbly';
-    src: url('/fonts/ShineBubbleDeco-MVKJx.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
   h1 {
     font-family: 'Bubbly', sans-serif;
     font-size: 3rem;
@@ -430,6 +437,7 @@
   .help {
     position:relative; 
     left: 87.5%;
+    height:fit-content;
   } 
 
   .help_cuadro {
