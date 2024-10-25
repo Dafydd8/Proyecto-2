@@ -44,6 +44,17 @@
     return rta;
   }
 
+  function generos_str(generos){
+    const generos_list = generos.split(";");
+    let rta = "";
+    for (let i = 0; i < generos_list.length-1; i++){
+      rta += generos_list[i];
+      rta += ", ";
+    }
+    rta += generos_list[generos_list.length-1];
+    return rta;
+  }
+
   function generarPosiciones(anio) {
     let rv = [];
     const ancho = window.innerWidth;
@@ -264,12 +275,12 @@
                 {/if}
               </div>
               <div class="info_popup" style="top:-50%">
-                <a href="{album.Link}" target="_blank">
+                <a href="{album.Link}" target="_blank" style="margin:10px; margin-bottom:6.5px">
                   <img src="{album.LinkImg}" alt="portada" class="album-img">
                 </a>
-                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Generos: {album.Generos}</p>
+                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Generos: {generos_str(album.Generos)}</p>
               </div>
-              <p>{album["Album"]} <br><span>{album["Artista"]}</span></p>
+              <p style="margin-top:20px;">{album["Album"]} <br><span>{album["Artista"]}</span></p>
             </div>
           {/each}
         </div>
@@ -288,6 +299,31 @@
         </div>
       </div>
     {/each}
+    <div class="page out">
+      <div>
+        <h1>Desarrollado por</h1>
+        <div class="redes_container">
+          <div class="redes">
+            <h1>Felicitas Astrada</h1>
+            <a target="_blank" href="https://github.com/felicitasastrada">
+              <img src="./images/git.png" alt="git bubble" style="animation: {4+Math.random()*2}s float ease-in-out infinite; animation-delay:{Math.random() * 3}s">
+            </a>
+            <a target="_blank" href="https://www.linkedin.com/in/felicitas-astrada-7040a3207/">
+              <img src="./images/linkedin.png" alt="linkedin bubble" style="animation: {4+Math.random()*2}s float ease-in-out infinite; animation-delay:{Math.random() * 3}s">
+            </a>
+          </div>
+          <div class="redes">
+            <h1>Dafydd Jenkins</h1>
+            <a target="_blank" href="https://github.com/Dafydd8">
+              <img src="./images/git.png" alt="git bubble" style="animation: {4+Math.random()*2}s float ease-in-out infinite; animation-delay:{Math.random() * 3}s">
+            </a>
+            <a target="_blank" href="https://www.linkedin.com/in/dafydd-jenkins-7b696b331/">
+              <img src="./images/linkedin.png" alt="linked in bubble" style="animation: {4+Math.random()*2}s float ease-in-out infinite; animation-delay:{Math.random() * 3}s">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -315,6 +351,15 @@
   .intro {
     align-items: center;
     justify-content: center;
+    text-align: center;
+  }
+
+  .out {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .info {
@@ -351,15 +396,16 @@
     visibility: hidden;
     z-index: 3;
     width: max-content;
+    height:auto;
     background-color: white;
     border-radius: 10px;
     display: flex;
     align-items: center; /* Alinea verticalmente la imagen y el texto */
     justify-content: center;
+
 }
 
   .info_popup img {
-    margin:10px;
     width: 75px;
     height: 75px;
     border-radius: 10px;
@@ -400,7 +446,6 @@
     font-weight: 400;
     font-style: normal;
     color: white;
-    margin-top: 20px;
     font-size: 16px;
     position: absolute;
     top: 95%;
@@ -450,6 +495,23 @@
 
   .help:hover .help_cuadro {
     visibility: visible;
+  }
+
+  .redes_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width:100%;
+    gap: 100px;
+  }
+
+  .redes a {
+    margin: 10px;
+  }
+
+  .redes a img{
+    margin-top: 5%;
   }
 
 </style>
