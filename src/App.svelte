@@ -294,7 +294,7 @@
                 <a href="{album.Link}" target="_blank" style="margin:10px; margin-bottom:6.5px">
                   <img src="{album.LinkImg}" alt="portada" class="album-img">
                 </a>
-                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Generos: {generos_str(album.Generos)}</p>
+                <p class="album-info" style="color:black; position:static;">Streams: {album.Streams}<br>Géneros: {generos_str(album.Generos)}</p>
               </div>
               <p style="margin-top:20px;">{album["Album"]} <br><span>{album["Artista"]}</span></p>
             </div>
