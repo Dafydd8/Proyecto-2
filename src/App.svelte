@@ -502,7 +502,7 @@
   }
   h2 {
     font-family: 'Bubbly', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: white;
   }
 
