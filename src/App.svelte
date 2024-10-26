@@ -240,6 +240,7 @@
         bubbleElement.className = 'bubble_filler';
         bubbleElement.style.left = `${bubble.x}px`;
         bubbleElement.style.top = `${bubble.y}px`;
+        bubbleElement.style.position = 'relative';
         bubbleElement.style.animationDelay = `${Math.random() * 3}s`;
         bubbleElement.style.animationDuration = `${4 + Math.random() * 2}s`;
         bubbleElement.style.zIndex = -1;
@@ -263,10 +264,9 @@
 <main>
   <div class="container">
     <div class="page intro">
-      <h1>Musical Bubbles</h1>
-    </div>
-    <div class="page intro">
-      <img src="images/cheatguidedef.png" alt="cheatguide" style="height: 100vh">
+      <h1 style="margin-bottom:0px">Pop the Top</h1>
+      <h2 >Los 5 álbumes nuevos más escuchados por año en las últimas dos décadas</h2>
+      <img src="images/cheatguidedef.png" alt="cheatguide" style="height: 75vh">
     </div>
     {#each anios as anio,index}
       <div class="page vis">
@@ -367,6 +367,8 @@
   }
 
   .intro {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -411,7 +413,7 @@
     font-weight: 400;
     font-style: normal;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     position: absolute;
     top: 95%;
     z-index: 1;
@@ -423,7 +425,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    font-size: 14px;
+    font-size: 16px;
     color: #ebeaea;
   }
 
@@ -496,6 +498,11 @@
   h1 {
     font-family: 'Bubbly', sans-serif;
     font-size: 3rem;
+    color: white;
+  }
+  h2 {
+    font-family: 'Bubbly', sans-serif;
+    font-size: 1.5rem;
     color: white;
   }
 
