@@ -264,8 +264,8 @@
 <main>
   <div class="container">
     <div class="page intro">
-      <h1 style="margin-bottom:0px">Pop the Top</h1>
-      <h2 >Los 5 álbumes nuevos más escuchados por año en las últimas dos décadas</h2>
+      <h1>Pop the Top</h1>
+      <h2>Los 5 álbumes nuevos más escuchados por año en las últimas dos décadas</h2>
       <img src="images/cheatguidedef.png" alt="cheatguide">
     </div>
     {#each anios as anio,index}
