@@ -73,11 +73,16 @@
       sizes.push(bubble_size(parseInt(curr_albums[i].Streams)));
     }
     // Definimos posiciones iniciales para las burbujas principales
-    const cubiculos = [[ancho*0.1,alto*0.15], [ancho*0.75,alto*0.25], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.60], [ancho*0.6,alto*0.65]];
+    const grids = [[[ancho*0.1,alto*0.15], [ancho*0.75,alto*0.10], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.60], [ancho*0.6,alto*0.65]],
+                    [[ancho*0.1,alto*0.65], [ancho*0.65,alto*0.60], [ancho*0.45,alto*0.35], [ancho*0.25,alto*0.15], [ancho*0.7,alto*0.1]],
+                    [[ancho*0.1,alto*0.1], [ancho*0.75,alto*0.35], [ancho*0.45,alto*0.15], [ancho*0.25,alto*0.55], [ancho*0.5,alto*0.65]],
+                    [[ancho*0.25,alto*0.2], [ancho*0.60,alto*0.10], [ancho*0.1,alto*0.45], [ancho*0.45,alto*0.65], [ancho*0.8,alto*0.50]],
+                    [[ancho*0.1,alto*0.7], [ancho*0.25,alto*0.20], [ancho*0.45,alto*0.35], [ancho*0.65,alto*0.65], [ancho*0.75,alto*0.1]]]
+    const grid = grids[d3.randomInt(0,5)(1)];
     for (var i = 0; i < 5; i++) {
-      //Modificamos la posición en x y en y leve y aleatoriamente
-      let x = d3.randomUniform(-25,25)() + cubiculos[i][0]; 
-      let y = d3.randomUniform(-25,25)() + cubiculos[i][1];
+      //Modificamos la posición levemente de forma aleatoria
+      let x = d3.randomUniform(-25,25)() + grid[i][0]; 
+      let y = d3.randomUniform(-25,25)() + grid[i][1];
       // Si la burbuja se sale de la pantalla por abajo, la movemos hacia arriba
       while (y + sizes[i] + 120 > alto){
         y -= 25;
