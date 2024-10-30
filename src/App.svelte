@@ -63,6 +63,7 @@
   }
 
   //Función para asignar posiciones "aleatorias" a las burbujas principales
+  //Las genera eligiendo de 5 posibles distribuciones predefinidas y agregandoles una pequeña variación aleatoria
   function generarPosiciones(anio) {
     let rv = [];
     const ancho = window.innerWidth;
@@ -118,9 +119,10 @@
   }
 
   //Función para generar burbujas de relleno
+  //Asigna un tamaño y posición aleatoria a cada burbuja. Intenta asignar posición hasta que no se superponga con una burbuja principal
   function generateFillBubbles(main_bubbles) {
     const fillBubbles = [];
-    const numFillBubbles = parseInt(d3.randomUniform(50,70)(1)); // Número de burbujas de relleno
+    const numFillBubbles = parseInt(d3.randomUniform(50,70)(1)); // Número aleatorio de burbujas de relleno
     for (let i = 0; i < numFillBubbles; i++) {
       const radius = parseInt(d3.randomUniform(10,40)(1)); // Tamaño aleatorio
       //Asignar posicion en x y en y aleatoria
