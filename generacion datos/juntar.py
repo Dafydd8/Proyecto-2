@@ -1,3 +1,5 @@
+# ARCHIVO AUXILIAR
+
 import csv
 
 f_out = open('spotify_juntado.csv', 'w', encoding='utf-8')

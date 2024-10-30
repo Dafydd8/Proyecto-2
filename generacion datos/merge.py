@@ -1,4 +1,7 @@
+#ARCHIVO AUXILIAR PARA LA GENERACION DEL CSV
+
 import csv
+
 f = open('albums_generos_reducidos.csv', 'r', encoding='utf-8')
 f_out = open('albums.csv', 'w', encoding='utf-8')
 f_out.write('Año;Album;Streams;Generos\n')

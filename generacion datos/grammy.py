@@ -1,3 +1,5 @@
+#AGREGAR COLUMNAS DE GANADORES DE ALBUM Y CANCION DEL AÑO
+
 import csv
 
 f = open("albums.csv", "r", encoding="utf-8")
